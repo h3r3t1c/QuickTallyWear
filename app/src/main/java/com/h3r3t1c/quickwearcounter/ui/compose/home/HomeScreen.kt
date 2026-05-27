@@ -1,7 +1,9 @@
 package com.h3r3t1c.quickwearcounter.ui.compose.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -14,11 +16,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.vectorResource
@@ -52,12 +59,25 @@ fun HomeScreen(navController: NavHostController, prefs: Preferences) {
     val containerColor = prefs[intPreferencesKey(DataStorePrefs.KEY_APP_THEME_COLOR)].let { color -> color?.toColor() ?: MaterialTheme.colorScheme.primary }
     val contentColor = prefs[intPreferencesKey(DataStorePrefs.KEY_APP_THEME_COLOR)].let { color -> color?.toColor()?.toContrastColor() ?: MaterialTheme.colorScheme.onPrimary }
     val count = prefs[intPreferencesKey(DataStorePrefs.KEY_CURRENT_COUNT)] ?: 0
+    val focusRequester = remember {
+        FocusRequester()
+    }
     ScreenScaffold(
         timeText = {},
         modifier = Modifier.fillMaxSize().background(Color.Black),
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .onRotaryScrollEvent{
+                    val delta = it.verticalScrollPixels.toInt()
+                    viewModel.updateRotaryTravel(context, delta, count){
+                        feedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
+                    }
+                    true
+                }
+                .focusRequester(focusRequester)
+                .focusable(),
         ) {
             ClickButton(R.drawable.ic_plus, containerColor, contentColor) {
                 viewModel.updateCount(context, count + 1)
@@ -82,6 +102,9 @@ fun HomeScreen(navController: NavHostController, prefs: Preferences) {
                 feedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
             }
         }
+    }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 }
 
@@ -132,7 +155,7 @@ private fun ActionButton(icon: Int, containerColor: Color, contentColor: Color, 
         Icon(
             imageVector = ImageVector.vectorResource(icon),
             contentDescription = null,
-            modifier = Modifier.size(if(isLarge) 32.dp else 24.dp)
+            modifier = Modifier.size(24.dp)
         )
     }
 }

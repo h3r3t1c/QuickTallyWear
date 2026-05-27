@@ -29,24 +29,22 @@ fun Nav(destination: String = NavDestinations.HOME){
     AppScaffold(
         modifier = Modifier.fillMaxSize().background(Color.Black)
     ) {
-        prefs.value?.let {p ->
+        if(prefs.value != null){
             SwipeDismissableNavHost(
                 navController = navController,
                 startDestination = destination
             ){
                 composable(NavDestinations.HOME){
-                    HomeScreen(navController, p)
+                    HomeScreen(navController, prefs.value!!)
                 }
                 composable(NavDestinations.SETTINGS){
-                    SettingsScreen(navController, p)
+                    SettingsScreen(navController, prefs.value!!)
                 }
             }
-
-        }?: Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ){
-            CircularProgressIndicator()
+        }else{
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
     }
 }

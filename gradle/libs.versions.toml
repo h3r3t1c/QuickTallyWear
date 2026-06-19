@@ -1,6 +1,7 @@
 [versions]
 agp = "9.2.1"
 datastorePreferences = "1.2.1"
+horologistTiles = "0.8.3-alpha"
 playServicesWearable = "20.0.1"
 kotlin = "2.2.10"
 composeBom = "2026.05.01"
@@ -26,6 +27,7 @@ composeNavigationVersion = "1.6.2"
 [libraries]
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastorePreferences" }
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+horologist-tiles = { module = "com.google.android.horologist:horologist-tiles", version.ref = "horologistTiles" }
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 ui = { group = "androidx.compose.ui", name = "ui" }

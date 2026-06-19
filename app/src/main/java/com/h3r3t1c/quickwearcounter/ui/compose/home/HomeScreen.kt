@@ -1,10 +1,7 @@
 package com.h3r3t1c.quickwearcounter.ui.compose.home
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -13,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
@@ -41,14 +40,11 @@ import androidx.wear.compose.material3.IconButton
 import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
-import androidx.wear.compose.material3.Text
 import com.h3r3t1c.quickwearcounter.R
 import com.h3r3t1c.quickwearcounter.data.DataStorePrefs
 import com.h3r3t1c.quickwearcounter.ext.toColor
 import com.h3r3t1c.quickwearcounter.ext.toContrastColor
 import com.h3r3t1c.quickwearcounter.ui.compose.WearStyleHelper
-import com.h3r3t1c.quickwearcounter.ui.compose.common.ColumnItemType
-import com.h3r3t1c.quickwearcounter.ui.compose.common.rememberResponsiveColumnPadding
 import com.h3r3t1c.quickwearcounter.ui.compose.nav.NavDestinations
 
 @Composable
@@ -143,7 +139,7 @@ private fun ActionButton(icon: Int, containerColor: Color, contentColor: Color, 
     IconButton(
         onClick = onClick,
         shapes = IconButtonDefaults.animatedShapes(
-            shape = MaterialTheme.shapes.medium,
+            shape = if(isLarge) MaterialTheme.shapes.medium else RoundedCornerShape(14.dp),
             pressedShape = MaterialTheme.shapes.small
         ),
         colors = IconButtonDefaults.iconButtonColors(
@@ -163,19 +159,23 @@ private fun ActionButton(icon: Int, containerColor: Color, contentColor: Color, 
 @Composable
 private fun ClickButton(icon: Int, containerColor: Color, contentColor: Color, onClick: () -> Unit){
     val isLarge = WearStyleHelper.isLargeScreen()
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(if(isLarge) 56.dp else 48.dp)
-            .background(containerColor)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
+    IconButton(
+        onClick = onClick,
+        shapes = IconButtonDefaults.animatedShapes(
+            shape = CircleShape,
+            pressedShape = MaterialTheme.shapes.medium
+        ),
+        colors = IconButtonDefaults.iconButtonColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        ),
+        modifier = Modifier.fillMaxWidth().height(if(isLarge) 66.dp else 56.dp)
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(icon),
             contentDescription = null,
             tint = contentColor,
-            modifier = Modifier.size(if(isLarge) 32.dp else 24.dp)
+            modifier = Modifier.size(if(isLarge) 40.dp else 32.dp)
         )
     }
 }

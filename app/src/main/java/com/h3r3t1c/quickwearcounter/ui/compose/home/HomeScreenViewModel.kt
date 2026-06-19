@@ -1,6 +1,9 @@
 package com.h3r3t1c.quickwearcounter.ui.compose.home
 
 import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.h3r3t1c.quickwearcounter.data.DataStorePrefs
@@ -10,6 +13,7 @@ import kotlinx.coroutines.launch
 class HomeScreenViewModel: ViewModel() {
 
     private var rotaryTravel = 0
+    var dialogState by mutableStateOf(HomeScreenDialogState.NONE)
 
     fun updateRotaryTravel(context: Context, travel: Int, count: Int, vibrate: () -> Unit){
         if(travel > 0 && rotaryTravel < 0)
@@ -33,4 +37,8 @@ class HomeScreenViewModel: ViewModel() {
             DataStorePrefs.updateInt(context, DataStorePrefs.KEY_CURRENT_COUNT, count)
         }
     }
+}
+enum class HomeScreenDialogState{
+    NONE,
+    CONFIRM_RESET_COUNT;
 }

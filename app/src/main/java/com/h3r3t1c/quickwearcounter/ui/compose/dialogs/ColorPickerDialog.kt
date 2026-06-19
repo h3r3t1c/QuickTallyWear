@@ -29,21 +29,19 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.Dialog
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.Text
 import com.h3r3t1c.quickwearcounter.R
 import com.h3r3t1c.quickwearcounter.ui.compose.common.ColumnItemType
 import com.h3r3t1c.quickwearcounter.ui.compose.common.rememberResponsiveColumnPadding
 import com.h3r3t1c.quickwearcounter.util.ColorsHelper
-import kotlin.text.get
 
 @Composable
 fun ColorPickerDialog(visible: Boolean, onDismiss: () -> Unit, onColorSelected: (Int?) -> Unit) {
-
 
     Dialog(
         visible = visible,

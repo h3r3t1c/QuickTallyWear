@@ -9,4 +9,6 @@
     <string name="tally">Tally</string>
     <string name="reset_count">Reset Count</string>
     <string name="confirm_reset_count">Are you sure you want to reset the count?</string>
+    <string name="about">About</string>
+    <string name="version">Version</string>
 </resources>

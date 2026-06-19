@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.h3r3t1c.quickwearcounter.BuildConfig
+import com.h3r3t1c.quickwearcounter.R
 import com.h3r3t1c.quickwearcounter.data.DataStorePrefs
 import com.h3r3t1c.quickwearcounter.tile.TallyTileService
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +16,15 @@ import kotlinx.coroutines.launch
 class SettingsScreenViewModel: ViewModel() {
 
     var dialogState by mutableStateOf(SettingsDialogState.NONE)
+
+    val options = mutableListOf<SettingsOption>()
+
+    init {
+        options.add(SettingsOption.SectionHeader(R.string.settings))
+        options.add(SettingsOption.ColorOption(R.string.tally_theme_color, DataStorePrefs.KEY_APP_THEME_COLOR))
+        options.add(SettingsOption.SectionHeader(R.string.about))
+        options.add(SettingsOption.InfoOption(R.string.version, "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE}"))
+    }
 
     fun updateInt(context: Context, key: String, value: Int?){
         viewModelScope.launch(Dispatchers.IO) {

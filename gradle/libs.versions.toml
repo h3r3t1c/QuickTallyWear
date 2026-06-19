@@ -1,7 +1,7 @@
 [versions]
 agp = "9.2.1"
 datastorePreferences = "1.2.1"
-horologistTiles = "0.8.3-alpha"
+horologistTiles = "0.7.15"
 playServicesWearable = "20.0.1"
 kotlin = "2.2.10"
 composeBom = "2026.05.01"

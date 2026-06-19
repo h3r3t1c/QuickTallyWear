@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,12 +26,14 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material3.Icon
@@ -45,6 +46,7 @@ import com.h3r3t1c.quickwearcounter.data.DataStorePrefs
 import com.h3r3t1c.quickwearcounter.ext.toColor
 import com.h3r3t1c.quickwearcounter.ext.toContrastColor
 import com.h3r3t1c.quickwearcounter.ui.compose.WearStyleHelper
+import com.h3r3t1c.quickwearcounter.ui.compose.dialogs.ConfirmDialog
 import com.h3r3t1c.quickwearcounter.ui.compose.nav.NavDestinations
 
 @Composable
@@ -60,14 +62,16 @@ fun HomeScreen(navController: NavHostController, prefs: Preferences) {
     }
     ScreenScaffold(
         timeText = {},
-        modifier = Modifier.fillMaxSize().background(Color.Black),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .onRotaryScrollEvent{
+                .onRotaryScrollEvent {
                     val delta = it.verticalScrollPixels.toInt()
-                    viewModel.updateRotaryTravel(context, delta, count){
+                    viewModel.updateRotaryTravel(context, delta, count) {
                         feedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
                     }
                     true
@@ -85,8 +89,7 @@ fun HomeScreen(navController: NavHostController, prefs: Preferences) {
                 containerColor = containerColor,
                 contentColor = contentColor,
                 onReset = {
-                    viewModel.updateCount(context, 0)
-                    feedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                    viewModel.openDialog(HomeScreenDialogState.CONFIRM_RESET_COUNT)
                 },
                 onOpenSettings = {
                     navController.navigate(NavDestinations.SETTINGS)
@@ -98,16 +101,41 @@ fun HomeScreen(navController: NavHostController, prefs: Preferences) {
                 feedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
             }
         }
+        Dialogs(viewModel)
     }
-    LaunchedEffect(Unit) {
+
+    LifecycleResumeEffect(Unit) {
         focusRequester.requestFocus()
+        onPauseOrDispose {  }
     }
+
+}
+
+@Composable
+private fun Dialogs(viewModel: HomeScreenViewModel){
+    val feedback = LocalHapticFeedback.current
+    val context = LocalContext.current
+    ConfirmDialog(
+        visible = viewModel.dialogState == HomeScreenDialogState.CONFIRM_RESET_COUNT,
+        title = stringResource(R.string.reset_count),
+        text = stringResource(R.string.confirm_reset_count),
+        icon = R.drawable.ic_reset,
+        onDismiss = { viewModel.closeDialog() },
+        onConfirm = {
+            viewModel.updateCount(context, 0)
+            feedback.performHapticFeedback(HapticFeedbackType.LongPress)
+            viewModel.closeDialog()
+        }
+    )
 }
 
 @Composable
 private fun ColumnScope.CenterCount(count: Int, containerColor: Color, contentColor: Color, onReset: () -> Unit, onOpenSettings: () -> Unit){
     Row(
-        modifier = Modifier.fillMaxWidth().weight(1f).padding(horizontal = 4.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+            .padding(horizontal = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -122,7 +150,9 @@ private fun ColumnScope.CenterCount(count: Int, containerColor: Color, contentCo
             autoSize = TextAutoSize.StepBased(),
             maxLines = 1,
             style = TextStyle(color = Color.White, textAlign = TextAlign.Center),
-            modifier = Modifier.weight(1f).padding(horizontal = 6.dp)
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 4.dp)
         )
         ActionButton(
             icon = R.drawable.ic_settings,
@@ -169,7 +199,9 @@ private fun ClickButton(icon: Int, containerColor: Color, contentColor: Color, o
             containerColor = containerColor,
             contentColor = contentColor
         ),
-        modifier = Modifier.fillMaxWidth().height(if(isLarge) 66.dp else 56.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(if (isLarge) 66.dp else 56.dp)
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(icon),

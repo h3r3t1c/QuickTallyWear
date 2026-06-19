@@ -13,10 +13,10 @@ android {
 
     defaultConfig {
         applicationId = "com.h3r3t1c.quickwearcounter"
-        minSdk = 30
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = 28
+        targetSdk = 35 // if you plan on keep using onRecentInteractionEventsAsync() in TallyTileService you MUST target 35
+        versionCode = 3
+        versionName = "2.0"
 
     }
 

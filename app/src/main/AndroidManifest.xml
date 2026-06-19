@@ -40,7 +40,7 @@
 
             <meta-data
                 android:name="androidx.wear.tiles.PREVIEW"
-                android:resource="@drawable/tile_preview" />
+                android:resource="@drawable/preview_tally_tile" />
         </service>
 
         <receiver android:name=".receiver.TallyComplicationTapReceiver"
@@ -74,6 +74,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+       <activity
+           android:name=".ui.ConfirmResetCountActivity"
+           android:exported="true"
+           android:noHistory="true"
+           android:excludeFromRecents="true"
+           android:taskAffinity="app.confimr.clear"
+           android:theme="@style/MainActivityTheme.Starting"/>
     </application>
 
 </manifest>

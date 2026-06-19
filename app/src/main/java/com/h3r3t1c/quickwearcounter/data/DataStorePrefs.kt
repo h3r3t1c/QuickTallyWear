@@ -36,4 +36,7 @@ object DataStorePrefs {
         updateCurrentCount(context, newCount)
         return newCount
     }
+    suspend fun getAppThemeColor(context: Context): Int? {
+        return context.dataStore.data.first()[intPreferencesKey(KEY_APP_THEME_COLOR)]
+    }
 }

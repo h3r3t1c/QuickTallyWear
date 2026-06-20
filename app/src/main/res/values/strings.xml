@@ -11,4 +11,16 @@
     <string name="confirm_reset_count">Are you sure you want to reset the count?</string>
     <string name="about">About</string>
     <string name="version">Version</string>
+    <string name="play_store_page">Play Store Page</string>
+    <string name="cannot_open">Cannot open!</string>
+    <string name="source_code">Source Code</string>
+    <string name="source_code_description">View the source code on GitHub using your phone.</string>
+    <string name="not_connected_to_phone">Not connected to phone</string>
+    <string name="continue_on_phone">Continue on phone</string>
+    <string name="more_apps">More Wear OS Apps</string>
+    <string name="app_unit_converter">Unit Converter</string>
+    <string name="app_tallies">Tallies</string>
+    <string name="app_calendar_pro">Calendar Pro</string>
+    <string name="app_pbow">Phone Battery On Wear</string>
+    <string name="app_event_countdowns">Event Countdowns</string>
 </resources>

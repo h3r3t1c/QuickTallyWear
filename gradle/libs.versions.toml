@@ -23,6 +23,7 @@ composeNavigation = "1.6.0"
 datastoreCore = "1.2.1"
 datastorePreferencesCore = "1.2.1"
 composeNavigationVersion = "1.6.2"
+wearRemoteInteractions = "1.2.0"
 
 [libraries]
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastorePreferences" }
@@ -52,6 +53,7 @@ tiles-tooling-preview = { group = "androidx.wear.tiles", name = "tiles-tooling-p
 watchface-complications-data-source-ktx = { group = "androidx.wear.watchface", name = "watchface-complications-data-source-ktx", version.ref = "watchfaceComplicationsDataSourceKtx" }
 androidx-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "composeNavigation" }
 compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "composeNavigationVersion" }
+androidx-wear-remote-interactions = { group = "androidx.wear", name = "wear-remote-interactions", version.ref = "wearRemoteInteractions" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

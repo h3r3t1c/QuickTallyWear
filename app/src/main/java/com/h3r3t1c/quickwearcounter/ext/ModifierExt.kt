@@ -43,7 +43,6 @@ fun Modifier.checkerboard(squareSize: Dp = SquareSize) = this
     }
 
 
-// ModifierExt.kt
 fun Modifier.partialBorder(
     width: Dp,
     color: Color,

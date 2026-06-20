@@ -1,5 +1,7 @@
 # Quick Tally for Wear OS
 A standalone quick tally app for Wear OS
+
+![Tally](https://raw.githubusercontent.com/h3r3t1c/QuickTallyWear/refs/heads/master/images/tally_2.png) ![Watch face complication](https://raw.githubusercontent.com/h3r3t1c/QuickTallyWear/refs/heads/master/images/complication.png)
 ## Features
 - Watch tile
 - Watch face complication

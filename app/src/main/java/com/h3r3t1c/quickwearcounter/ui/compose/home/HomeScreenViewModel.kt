@@ -52,5 +52,6 @@ class HomeScreenViewModel: ViewModel() {
 }
 enum class HomeScreenDialogState{
     NONE,
-    CONFIRM_RESET_COUNT;
+    CONFIRM_RESET_COUNT,
+    EDIT_COUNT;
 }

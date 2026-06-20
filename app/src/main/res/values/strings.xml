@@ -23,4 +23,7 @@
     <string name="app_calendar_pro">Calendar Pro</string>
     <string name="app_pbow">Phone Battery On Wear</string>
     <string name="app_event_countdowns">Event Countdowns</string>
+    <string name="text_cannot_be_empty">Text cannot be empty!</string>
+    <string name="edit_value">Edit Value</string>
+    <string name="text_must_be_a_number">Text must be a number!</string>
 </resources>

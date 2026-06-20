@@ -1,7 +1,9 @@
 package com.h3r3t1c.quickwearcounter.ui.compose.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -18,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -47,6 +50,7 @@ import com.h3r3t1c.quickwearcounter.ext.toColor
 import com.h3r3t1c.quickwearcounter.ext.toContrastColor
 import com.h3r3t1c.quickwearcounter.ui.compose.WearStyleHelper
 import com.h3r3t1c.quickwearcounter.ui.compose.dialogs.ConfirmDialog
+import com.h3r3t1c.quickwearcounter.ui.compose.dialogs.EditTextDialog
 import com.h3r3t1c.quickwearcounter.ui.compose.nav.NavDestinations
 
 @Composable
@@ -88,6 +92,9 @@ fun HomeScreen(navController: NavHostController, prefs: Preferences) {
                 count = count,
                 containerColor = containerColor,
                 contentColor = contentColor,
+                onEditCount = {
+                    viewModel.openDialog(HomeScreenDialogState.EDIT_COUNT)
+                },
                 onReset = {
                     viewModel.openDialog(HomeScreenDialogState.CONFIRM_RESET_COUNT)
                 },
@@ -101,9 +108,10 @@ fun HomeScreen(navController: NavHostController, prefs: Preferences) {
                 feedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
             }
         }
-        Dialogs(viewModel)
+        Dialogs(count, viewModel)
     }
-
+    // have to use this to fixed loss of focus when navigating to settings screen
+    // LaunchedEffect does not work
     LifecycleResumeEffect(Unit) {
         focusRequester.requestFocus()
         onPauseOrDispose {  }
@@ -112,7 +120,7 @@ fun HomeScreen(navController: NavHostController, prefs: Preferences) {
 }
 
 @Composable
-private fun Dialogs(viewModel: HomeScreenViewModel){
+private fun Dialogs(count: Int, viewModel: HomeScreenViewModel){
     val feedback = LocalHapticFeedback.current
     val context = LocalContext.current
     ConfirmDialog(
@@ -123,14 +131,24 @@ private fun Dialogs(viewModel: HomeScreenViewModel){
         onDismiss = { viewModel.closeDialog() },
         onConfirm = {
             viewModel.updateCount(context, 0)
-            feedback.performHapticFeedback(HapticFeedbackType.LongPress)
+            feedback.performHapticFeedback(HapticFeedbackType.Confirm)
+            viewModel.closeDialog()
+        }
+    )
+    EditTextDialog(
+        visible = viewModel.dialogState == HomeScreenDialogState.EDIT_COUNT,
+        value = count,
+        onDismiss = { viewModel.closeDialog() },
+        onUpdate = {
+            viewModel.updateCount(context, it)
+            feedback.performHapticFeedback(HapticFeedbackType.Confirm)
             viewModel.closeDialog()
         }
     )
 }
 
 @Composable
-private fun ColumnScope.CenterCount(count: Int, containerColor: Color, contentColor: Color, onReset: () -> Unit, onOpenSettings: () -> Unit){
+private fun ColumnScope.CenterCount(count: Int, containerColor: Color, contentColor: Color,onEditCount: () -> Unit, onReset: () -> Unit, onOpenSettings: () -> Unit){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -145,15 +163,21 @@ private fun ColumnScope.CenterCount(count: Int, containerColor: Color, contentCo
             contentColor = contentColor,
             onClick = onReset
         )
-        BasicText(
-            text = count.toString(),
-            autoSize = TextAutoSize.StepBased(),
-            maxLines = 1,
-            style = TextStyle(color = Color.White, textAlign = TextAlign.Center),
+        Box(
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 4.dp)
-        )
+                .clip(MaterialTheme.shapes.large)
+                .clickable(onClick = onEditCount),
+            contentAlignment = Alignment.Center
+        ){
+            BasicText(
+                text = count.toString(),
+                autoSize = TextAutoSize.StepBased(),
+                maxLines = 1,
+                style = TextStyle(color = Color.White, textAlign = TextAlign.Center),
+            )
+        }
         ActionButton(
             icon = R.drawable.ic_settings,
             containerColor = containerColor,

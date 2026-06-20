@@ -98,7 +98,7 @@ fun SettingsScreen(navController: NavHostController, prefs: Preferences) {
                         AppOption(option)
                     }
                     is SettingsOption.SwitchOption -> {
-                        SwitchOption(option.titleResource, prefs[booleanPreferencesKey(option.key)] ?: false){newValue ->
+                        SwitchOption(option.titleResource, option.subTitleResource, prefs[booleanPreferencesKey(option.key)] ?: false){newValue ->
                             viewModel.updateBoolean(context, option.key, newValue)
                         }
                     }
@@ -118,12 +118,17 @@ fun SettingsScreen(navController: NavHostController, prefs: Preferences) {
 }
 
 @Composable
-private fun SwitchOption(titleResource: Int, value: Boolean, onCheckedChange: (Boolean) -> Unit){
+private fun SwitchOption(titleResource: Int, subtitleResource: Int?, value: Boolean, onCheckedChange: (Boolean) -> Unit){
     SwitchButton(
         checked = value,
         onCheckedChange = onCheckedChange,
         label = {
             Text(text = stringResource(titleResource))
+        },
+        secondaryLabel = {
+            subtitleResource?.let {
+                Text(stringResource(it), maxLines = 4)
+            }
         },
         modifier = Modifier.fillMaxWidth(),
         colors = SwitchButtonDefaults.switchButtonColors()
@@ -144,6 +149,7 @@ private fun AppOption(option: SettingsOption.AppOption){
                 modifier = Modifier.size(if(WearStyleHelper.isLargeScreen()) ButtonDefaults.ExtraLargeIconSize else ButtonDefaults.LargeIconSize).background(option.iconBackgroundColor, MaterialTheme.shapes.small).padding(4.dp)
             )
         },
+
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.filledTonalButtonColors()
     )
@@ -211,7 +217,7 @@ private fun Dialogs(viewModel: SettingsScreenViewModel){
         viewModel.closeDialog()
         viewModel.updateInt(context, DataStorePrefs.KEY_APP_THEME_COLOR, it)
     }
-    FontScaleIndependent { // has to be font scale independent because if not it will not draw correctly if font scale != 1
+    FontScaleIndependent { // has to be font scale independent because it will not draw correctly if font scale > 1
         val dialogStyle = OpenOnPhoneDialogDefaults.curvedTextStyle
         OpenOnPhoneDialog(
             visible = viewModel.openDialog == SettingsScreenViewModel.KEY_DIALOG_SHOW_CONTINUE_ON_PHONE,

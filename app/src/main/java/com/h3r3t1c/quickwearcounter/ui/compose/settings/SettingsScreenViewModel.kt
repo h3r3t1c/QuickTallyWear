@@ -35,7 +35,9 @@ class SettingsScreenViewModel(application: Application) : AndroidViewModel(appli
         val context = getApplication<Application>().applicationContext
         options.add(SettingsOption.SectionHeader(R.string.settings))
         options.add(SettingsOption.ColorOption(R.string.tally_theme_color, DataStorePrefs.KEY_APP_THEME_COLOR))
-        options.add(SettingsOption.SwitchOption(R.string.keep_screen_on, DataStorePrefs.KEY_KEEP_SCREEN_ON))
+        options.add(SettingsOption.SwitchOption(R.string.keep_screen_on, R.string.keep_screen_on_description,DataStorePrefs.KEY_KEEP_SCREEN_ON))
+        options.add(SettingsOption.SwitchOption(R.string.keep_screen_visible_ambient_mode, R.string.keep_screen_visible_ambient_mode_description,DataStorePrefs.KEY_KEEP_SCREEN_VISIBLE_AMBIENT_MODE))
+
 
         options.add(SettingsOption.SectionHeader(R.string.about))
         options.add(SettingsOption.ClickOption(R.drawable.ic_google_play, R.string.play_store_page, null) {

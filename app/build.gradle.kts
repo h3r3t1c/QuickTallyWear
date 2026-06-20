@@ -15,8 +15,8 @@ android {
         applicationId = "com.h3r3t1c.quickwearcounter"
         minSdk = 28
         targetSdk = 35 // if you plan on keep using onRecentInteractionEventsAsync() in TallyTileService you MUST target 35
-        versionCode = 4
-        versionName = "2.0.1"
+        versionCode = 5
+        versionName = "2.0.2"
 
     }
 
@@ -41,6 +41,7 @@ android {
 dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
+    implementation(libs.androidx.wear.ongoing)
     implementation(libs.androidx.wear.remote.interactions)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)

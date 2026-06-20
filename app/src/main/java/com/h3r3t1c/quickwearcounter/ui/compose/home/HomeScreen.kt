@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +57,7 @@ import com.h3r3t1c.quickwearcounter.ui.compose.WearStyleHelper
 import com.h3r3t1c.quickwearcounter.ui.compose.dialogs.ConfirmDialog
 import com.h3r3t1c.quickwearcounter.ui.compose.dialogs.EditTextDialog
 import com.h3r3t1c.quickwearcounter.ui.compose.nav.NavDestinations
+import com.h3r3t1c.quickwearcounter.util.OngoingActivityHelper
 
 @Composable
 fun HomeScreen(navController: NavHostController, prefs: Preferences) {
@@ -68,6 +68,8 @@ fun HomeScreen(navController: NavHostController, prefs: Preferences) {
     val contentColor = prefs[intPreferencesKey(DataStorePrefs.KEY_APP_THEME_COLOR)].let { color -> color?.toColor()?.toContrastColor() ?: MaterialTheme.colorScheme.onPrimary }
     val count = prefs[intPreferencesKey(DataStorePrefs.KEY_CURRENT_COUNT)] ?: 0
     val keepScreenOn = prefs[booleanPreferencesKey(DataStorePrefs.KEY_KEEP_SCREEN_ON)] ?: false
+    val keepVisibleInAmbient = prefs[booleanPreferencesKey(DataStorePrefs.KEY_KEEP_SCREEN_VISIBLE_AMBIENT_MODE)] ?: false
+
     val focusRequester = remember {
         FocusRequester()
     }
@@ -135,16 +137,18 @@ fun HomeScreen(navController: NavHostController, prefs: Preferences) {
         Dialogs(count, viewModel)
     }
     // have to use this to fixed loss of focus when navigating to settings screen
-    // LaunchedEffect does not work
     val view = LocalView.current
     LifecycleResumeEffect(Unit) {
         focusRequester.requestFocus()
         onPauseOrDispose { }
     }
-    DisposableEffect(view, keepScreenOn) {
-        view.keepScreenOn = keepScreenOn
-        onDispose {
+    LifecycleResumeEffect(view, keepScreenOn, keepVisibleInAmbient) {
+        view.keepScreenOn = keepScreenOn && !keepVisibleInAmbient
+        if(keepVisibleInAmbient && !keepScreenOn)
+            OngoingActivityHelper.showOngoingActivity(context)
+        onPauseOrDispose {
             view.keepScreenOn = false
+            OngoingActivityHelper.hideOngoingActivity(context)
         }
     }
 }
@@ -206,7 +210,7 @@ private fun ColumnScope.CenterCount(isAmbient: Boolean, count: Int, containerCol
                 text = count.toString(),
                 autoSize = TextAutoSize.StepBased(),
                 maxLines = 1,
-                style = TextStyle(color = Color.White, textAlign = TextAlign.Center),
+                style = TextStyle(color = if(isAmbient) Color.White.copy(0.75f) else Color.White, textAlign = TextAlign.Center),
             )
         }
         ActionButton(
@@ -231,12 +235,12 @@ private fun ActionButton(isAmbient: Boolean, icon: Int, containerColor: Color, c
         ),
         colors = IconButtonDefaults.iconButtonColors(
             containerColor = if(isAmbient) Color.Transparent else containerColor,
-            contentColor = if(isAmbient) containerColor else contentColor
+            contentColor = if(isAmbient) containerColor.copy(0.75f) else contentColor
         ),
         modifier = Modifier
             .size(if(isLarge) 48.dp else 40.dp)
             then(
-                if (isAmbient) Modifier.border(2.dp, containerColor, baseShape) else Modifier
+                if (isAmbient) Modifier.border(2.dp, containerColor.copy(0.75f), baseShape) else Modifier
             )
     ) {
         Icon(

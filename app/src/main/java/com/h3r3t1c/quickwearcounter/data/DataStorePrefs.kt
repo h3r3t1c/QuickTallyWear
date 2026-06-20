@@ -11,6 +11,7 @@ object DataStorePrefs {
     const val KEY_APP_THEME_COLOR = "app_theme_color"
     const val KEY_CURRENT_COUNT = "current_count"
     const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
+    const val KEY_KEEP_SCREEN_VISIBLE_AMBIENT_MODE = "keep_screen_visible_ambient_mode"
 
     //val appThemeColor = intPreferencesKey(KEY_APP_THEME_COLOR)
 
@@ -38,13 +39,5 @@ object DataStorePrefs {
     suspend fun updateCurrentCount(context: Context, value: Int) {
         updateInt(context, KEY_CURRENT_COUNT, value)
     }
-    suspend fun updateCountByAmount(context: Context, amount: Int): Int {
-        val currentCount = getCurrentCount(context) ?: 0
-        val newCount = currentCount + amount
-        updateCurrentCount(context, newCount)
-        return newCount
-    }
-    suspend fun getAppThemeColor(context: Context): Int? {
-        return context.dataStore.data.first()[intPreferencesKey(KEY_APP_THEME_COLOR)]
-    }
+
 }

@@ -4,7 +4,7 @@ A standalone quick tally app for Wear OS
 - Watch tile
 - Watch face complication
 - Ongoing quick tally
-- Ambient mode aware
+- Ambient mode support
 - Supports dynamic theme and user selected theme color
 - Standalone so no need for phone
 - No ads

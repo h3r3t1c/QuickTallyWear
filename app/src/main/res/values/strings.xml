@@ -27,4 +27,9 @@
     <string name="edit_value">Edit Value</string>
     <string name="text_must_be_a_number">Text must be a number!</string>
     <string name="keep_screen_on">Keep Screen On</string>
+    <string name="keep_screen_on_description">Keep screen on while using app. Will never enter ambient mode in app.</string>
+    <string name="ongoing_activity">Ongoing Activity</string>
+    <string name="ongoing_activity_desc">Ongoing activity notification to keep screen shown in ambient mode.</string>
+    <string name="keep_screen_visible_ambient_mode">Keep Screen Visible - Ambient Mode</string>
+    <string name="keep_screen_visible_ambient_mode_description">Prevent the system from closing the app while in ambient mode.</string>
 </resources>

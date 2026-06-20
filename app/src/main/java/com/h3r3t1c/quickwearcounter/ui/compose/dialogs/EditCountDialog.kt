@@ -36,93 +36,99 @@ import com.h3r3t1c.quickwearcounter.ui.compose.common.rememberResponsiveColumnPa
 
 
 /**
- * I'm using and EditText here to *fix* the problems with entering numbers using the Samsung keyboard and compose
+ * I'm using an EditText here to *fix* the problems with entering numbers using the Samsung keyboard and compose
  */
 
 @Composable
 fun EditTextDialog(visible: Boolean, value: Int,  onDismiss: () -> Unit, onUpdate: (Int) -> Unit){
-    val context = LocalContext.current
+
     Dialog(
         visible = visible,
         onDismissRequest = onDismiss,
     ) {
-        val view = remember {
-            EditText(context)
-        }
-        val save = {
-            val s = view.text.toString().trim()
-            if(s.isEmpty()){
-                Toast.makeText(context, R.string.text_cannot_be_empty, Toast.LENGTH_SHORT).show()
-            }else{
-                val i = s.toIntOrNull()
-                if(i == null){
-                    Toast.makeText(context, R.string.text_must_be_a_number, Toast.LENGTH_SHORT).show()
-                }else {
-                    onUpdate(i)
-                }
+        EditCountDialogContent(value, onDismiss, onUpdate)
+    }
+}
+
+@Composable
+fun EditCountDialogContent(value: Int,  onDismiss: () -> Unit, onUpdate: (Int) -> Unit){
+    val context = LocalContext.current
+    val view = remember {
+        EditText(context)
+    }
+    val save = {
+        val s = view.text.toString().trim()
+        if(s.isEmpty()){
+            Toast.makeText(context, R.string.text_cannot_be_empty, Toast.LENGTH_SHORT).show()
+        }else{
+            val i = s.toIntOrNull()
+            if(i == null){
+                Toast.makeText(context, R.string.text_must_be_a_number, Toast.LENGTH_SHORT).show()
+            }else {
+                onUpdate(i)
             }
         }
-        ScreenScaffold {
-            val listState = rememberScalingLazyListState(initialCenterItemIndex = 0)
-            val contentPadding = rememberResponsiveColumnPadding(
-                first = ColumnItemType.ListHeader,
-                last = ColumnItemType.ButtonRow,
-            )
+    }
 
-            ScreenScaffold(
-                scrollState = listState,
-                contentPadding = contentPadding
-            ) {
-                ScalingLazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black),
-                    autoCentering = null,
-                    state = listState,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    contentPadding = contentPadding,
-                ) {
-                    item{
-                        Text(text = stringResource(R.string.edit_value), style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center, modifier = Modifier.padding(bottom = 8.dp))
-                    }
+    val listState = rememberScalingLazyListState(initialCenterItemIndex = 0)
+    val contentPadding = rememberResponsiveColumnPadding(
+        first = ColumnItemType.ListHeader,
+        last = ColumnItemType.ButtonRow,
+    )
 
-                    item{
-                        AndroidView(
-                            modifier = Modifier.fillMaxWidth(),
-                            factory = { context ->
+    ScreenScaffold(
+        scrollState = listState,
+        contentPadding = contentPadding
+    ) {
+        ScalingLazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black),
+            autoCentering = null,
+            state = listState,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            contentPadding = contentPadding,
+        ) {
+            item{
+                Text(text = stringResource(R.string.edit_value), style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center, modifier = Modifier.padding(bottom = 8.dp))
+            }
 
-                                view.isSingleLine = true
-                                view.text = SpannableStringBuilder(value.toString())
-                                view.setBackgroundResource(R.drawable.input_background)
-                                view.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_SIGNED
-                                view.setOnEditorActionListener { tv, actionId, event ->
-                                    if(actionId == EditorInfo.IME_ACTION_DONE){
-                                        save()
-                                    }
-                                    false
-                                }
-                                view.imeOptions = EditorInfo.IME_ACTION_DONE
+            item{
+                AndroidView(
+                    modifier = Modifier.fillMaxWidth(),
+                    factory = { context ->
 
-                                view
-                            },
-                            update = {
-
-                            }
-                        )
-                    }
-
-                    item{
-                        Row(
-                            modifier = Modifier.padding(top = 12.dp)
-                        ) {
-                            AlertDialogDefaults.DismissButton(onDismiss)
-                            Spacer(modifier = Modifier.width(12.dp))
-                            AlertDialogDefaults.ConfirmButton( {
+                        view.isSingleLine = true
+                        view.text = SpannableStringBuilder(value.toString())
+                        view.setBackgroundResource(R.drawable.input_background)
+                        view.textSize = 24f
+                        view.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_SIGNED
+                        view.setOnEditorActionListener { tv, actionId, event ->
+                            if(actionId == EditorInfo.IME_ACTION_DONE){
                                 save()
-                            })
+                            }
+                            false
                         }
+                        view.imeOptions = EditorInfo.IME_ACTION_DONE
+
+                        view
+                    },
+                    update = {
+
                     }
+                )
+            }
+
+            item{
+                Row(
+                    modifier = Modifier.padding(top = 12.dp)
+                ) {
+                    AlertDialogDefaults.DismissButton(onDismiss)
+                    Spacer(modifier = Modifier.width(12.dp))
+                    AlertDialogDefaults.ConfirmButton( {
+                        save()
+                    })
                 }
             }
         }

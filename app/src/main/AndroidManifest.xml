@@ -83,6 +83,14 @@
            android:excludeFromRecents="true"
            android:taskAffinity="app.confimr.clear"
            android:theme="@style/MainActivityTheme.Starting"/>
+
+        <activity
+            android:name=".ui.EditCountActivity"
+            android:exported="true"
+            android:noHistory="true"
+            android:excludeFromRecents="true"
+            android:taskAffinity="app.edt.cnt"
+            android:theme="@style/MainActivityTheme.Starting"/>
     </application>
 
 </manifest>

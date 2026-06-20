@@ -48,6 +48,7 @@ import com.h3r3t1c.quickwearcounter.tile.TallyTileService.Companion.IMAGE_PLUS
 import com.h3r3t1c.quickwearcounter.tile.TallyTileService.Companion.IMAGE_RESET
 import com.h3r3t1c.quickwearcounter.tile.TallyTileService.Companion.imageMapping
 import com.h3r3t1c.quickwearcounter.ui.ConfirmResetCountActivity
+import com.h3r3t1c.quickwearcounter.ui.EditCountActivity
 import com.h3r3t1c.quickwearcounter.ui.MainActivity
 import com.h3r3t1c.quickwearcounter.ui.compose.WearStyleHelper
 import com.h3r3t1c.quickwearcounter.util.ColorsHelper
@@ -76,6 +77,9 @@ class TallyTileService : SuspendingTileService() {
         var needUpdate = true
         fun setNeedUpdate(){
             needUpdate = true
+        }
+        fun updateNow(context: Context){
+            getUpdater(context).requestUpdate(TallyTileService::class.java)
         }
     }
 
@@ -240,7 +244,15 @@ private fun MaterialScope.centerCount(isLarge: Boolean, count: String): LayoutEl
         .setHeight(expand())
         .setVerticalAlignment(LayoutElementBuilders.VERTICAL_ALIGN_CENTER)
         .setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
-
+        .setModifiers(
+            ModifiersBuilders.Modifiers.Builder()
+                .setClickable(
+                    clickable(
+                        action = ActionBuilders.launchAction(ComponentName(context, EditCountActivity::class.java))
+                    )
+                )
+                .build()
+        )
     box.addContent(
         text(
             count.layoutString,

@@ -13,7 +13,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.wear.compose.material3.AlertDialogContent
 import androidx.wear.compose.material3.AlertDialogDefaults
 import androidx.wear.compose.material3.Icon
@@ -21,7 +20,6 @@ import androidx.wear.compose.material3.Text
 import com.h3r3t1c.quickwearcounter.R
 import com.h3r3t1c.quickwearcounter.complication.TallyComplicationService
 import com.h3r3t1c.quickwearcounter.data.DataStorePrefs
-import com.h3r3t1c.quickwearcounter.ext.dataStore
 import com.h3r3t1c.quickwearcounter.presentation.theme.QuickTallyTheme
 import com.h3r3t1c.quickwearcounter.tile.TallyTileService
 import kotlinx.coroutines.Dispatchers
@@ -39,13 +37,9 @@ class ConfirmResetCountActivity : ComponentActivity() {
                     confirmButton = {
                         AlertDialogDefaults.ConfirmButton({
                             coroutineScope.launch(Dispatchers.Default) {
-                                dataStore.updateData { prefs ->
-                                    prefs.toMutablePreferences().apply {
-                                        set(intPreferencesKey(DataStorePrefs.KEY_CURRENT_COUNT), 0)
-                                    }
-                                }
+                                DataStorePrefs.updateCurrentCount(applicationContext, 0)
                                 TallyComplicationService.updateAll(applicationContext)
-                                TallyTileService.setNeedUpdate()
+                                TallyTileService.updateNow(applicationContext)
                                 withContext(Dispatchers.Main){
                                     finish()
                                 }

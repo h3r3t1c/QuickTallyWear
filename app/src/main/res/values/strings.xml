@@ -26,4 +26,5 @@
     <string name="text_cannot_be_empty">Text cannot be empty!</string>
     <string name="edit_value">Edit Value</string>
     <string name="text_must_be_a_number">Text must be a number!</string>
+    <string name="keep_screen_on">Keep Screen On</string>
 </resources>

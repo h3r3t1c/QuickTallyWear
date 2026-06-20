@@ -21,6 +21,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -35,6 +36,8 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.OpenOnPhoneDialog
 import androidx.wear.compose.material3.OpenOnPhoneDialogDefaults
 import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.SwitchButton
+import androidx.wear.compose.material3.SwitchButtonDefaults
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.openOnPhoneDialogCurvedText
 import com.h3r3t1c.quickwearcounter.R
@@ -49,7 +52,7 @@ import com.h3r3t1c.quickwearcounter.ui.compose.dialogs.ColorPickerDialog
 @Composable
 fun SettingsScreen(navController: NavHostController, prefs: Preferences) {
     val viewModel: SettingsScreenViewModel = viewModel()
-
+    val context = LocalContext.current
     val listState = rememberScalingLazyListState(
         initialCenterItemIndex = 0
     )
@@ -94,6 +97,11 @@ fun SettingsScreen(navController: NavHostController, prefs: Preferences) {
                     is SettingsOption.AppOption ->{
                         AppOption(option)
                     }
+                    is SettingsOption.SwitchOption -> {
+                        SwitchOption(option.titleResource, prefs[booleanPreferencesKey(option.key)] ?: false){newValue ->
+                            viewModel.updateBoolean(context, option.key, newValue)
+                        }
+                    }
                 }
             }
         }
@@ -107,6 +115,19 @@ fun SettingsScreen(navController: NavHostController, prefs: Preferences) {
         }
     }
     Dialogs(viewModel)
+}
+
+@Composable
+private fun SwitchOption(titleResource: Int, value: Boolean, onCheckedChange: (Boolean) -> Unit){
+    SwitchButton(
+        checked = value,
+        onCheckedChange = onCheckedChange,
+        label = {
+            Text(text = stringResource(titleResource))
+        },
+        modifier = Modifier.fillMaxWidth(),
+        colors = SwitchButtonDefaults.switchButtonColors()
+    )
 }
 
 @Composable

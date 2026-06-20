@@ -1,6 +1,7 @@
 package com.h3r3t1c.quickwearcounter.data
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.h3r3t1c.quickwearcounter.ext.dataStore
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.first
 object DataStorePrefs {
     const val KEY_APP_THEME_COLOR = "app_theme_color"
     const val KEY_CURRENT_COUNT = "current_count"
+    const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
 
     //val appThemeColor = intPreferencesKey(KEY_APP_THEME_COLOR)
 
@@ -21,6 +23,12 @@ object DataStorePrefs {
             context.dataStore.edit { settings ->
                 settings[intPreferencesKey(key)] = value
             }
+        }
+    }
+
+    suspend fun updateBoolean(context: Context, key: String, value: Boolean) {
+        context.dataStore.edit { settings ->
+            settings[booleanPreferencesKey(key)] = value
         }
     }
 

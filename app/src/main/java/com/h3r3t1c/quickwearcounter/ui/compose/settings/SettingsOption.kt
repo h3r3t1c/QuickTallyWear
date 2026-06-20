@@ -9,4 +9,5 @@ sealed class SettingsOption(val key: String) {
     class InfoOption(val iconResource: Int, val titleResource: Int, val value: String): SettingsOption(titleResource.toString())
     class ClickOption(val iconResource: Int, val titleResource: Int, val subtitleResource: Int?, val onClick: () -> Unit): SettingsOption(titleResource.toString())
     class AppOption(val iconResource: Int, val iconBackgroundColor: Color, val titleResource: Int, val onClick: () -> Unit): SettingsOption(titleResource.toString())
+    class SwitchOption(val titleResource: Int, dataStorePrefsKey: String): SettingsOption(dataStorePrefsKey)
 }

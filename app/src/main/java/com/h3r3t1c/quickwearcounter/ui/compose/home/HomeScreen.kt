@@ -1,6 +1,7 @@
 package com.h3r3t1c.quickwearcounter.ui.compose.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,12 +31,14 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -44,8 +48,10 @@ import androidx.wear.compose.material3.IconButton
 import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
+import com.google.android.horologist.compose.ambient.AmbientAware
 import com.h3r3t1c.quickwearcounter.R
 import com.h3r3t1c.quickwearcounter.data.DataStorePrefs
+import com.h3r3t1c.quickwearcounter.ext.partialBorder
 import com.h3r3t1c.quickwearcounter.ext.toColor
 import com.h3r3t1c.quickwearcounter.ext.toContrastColor
 import com.h3r3t1c.quickwearcounter.ui.compose.WearStyleHelper
@@ -61,6 +67,7 @@ fun HomeScreen(navController: NavHostController, prefs: Preferences) {
     val containerColor = prefs[intPreferencesKey(DataStorePrefs.KEY_APP_THEME_COLOR)].let { color -> color?.toColor() ?: MaterialTheme.colorScheme.primary }
     val contentColor = prefs[intPreferencesKey(DataStorePrefs.KEY_APP_THEME_COLOR)].let { color -> color?.toColor()?.toContrastColor() ?: MaterialTheme.colorScheme.onPrimary }
     val count = prefs[intPreferencesKey(DataStorePrefs.KEY_CURRENT_COUNT)] ?: 0
+    val keepScreenOn = prefs[booleanPreferencesKey(DataStorePrefs.KEY_KEEP_SCREEN_ON)] ?: false
     val focusRequester = remember {
         FocusRequester()
     }
@@ -70,53 +77,76 @@ fun HomeScreen(navController: NavHostController, prefs: Preferences) {
             .fillMaxSize()
             .background(Color.Black),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .onRotaryScrollEvent {
-                    val delta = it.verticalScrollPixels.toInt()
-                    viewModel.updateRotaryTravel(context, delta, count) {
-                        feedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
+        AmbientAware {
+            val isAmbient = it.isAmbient
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .onRotaryScrollEvent {rse ->
+                        val delta = rse.verticalScrollPixels.toInt()
+                        viewModel.updateRotaryTravel(context, delta, count) {
+                            feedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
+                        }
+                        true
                     }
-                    true
+                    .focusRequester(focusRequester)
+                    .focusable(),
+            ) {
+                ClickButton(
+                    isAmbient = isAmbient,
+                    icon = R.drawable.ic_plus,
+                    containerColor = containerColor,
+                    contentColor = contentColor,
+                    useBottomBorder = true
+                ) {
+                    viewModel.updateCount(context, count + 1)
+                    feedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
                 }
-                .focusRequester(focusRequester)
-                .focusable(),
-        ) {
-            ClickButton(R.drawable.ic_plus, containerColor, contentColor) {
-                viewModel.updateCount(context, count + 1)
-                feedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
-            }
 
-            CenterCount(
-                count = count,
-                containerColor = containerColor,
-                contentColor = contentColor,
-                onEditCount = {
-                    viewModel.openDialog(HomeScreenDialogState.EDIT_COUNT)
-                },
-                onReset = {
-                    viewModel.openDialog(HomeScreenDialogState.CONFIRM_RESET_COUNT)
-                },
-                onOpenSettings = {
-                    navController.navigate(NavDestinations.SETTINGS)
+                CenterCount(
+                    isAmbient = isAmbient,
+                    count = count,
+                    containerColor = containerColor,
+                    contentColor = contentColor,
+                    onEditCount = {
+                        viewModel.openDialog(HomeScreenDialogState.EDIT_COUNT)
+                    },
+                    onReset = {
+                        viewModel.openDialog(HomeScreenDialogState.CONFIRM_RESET_COUNT)
+                    },
+                    onOpenSettings = {
+                        navController.navigate(NavDestinations.SETTINGS)
+                    }
+                )
+
+                ClickButton(
+                    isAmbient = isAmbient,
+                    icon = R.drawable.ic_minus,
+                    containerColor = containerColor,
+                    contentColor = contentColor,
+                    useTopBorder = true
+                ) {
+                    viewModel.updateCount(context, count - 1)
+                    feedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
                 }
-            )
-
-            ClickButton(R.drawable.ic_minus, containerColor, contentColor) {
-                viewModel.updateCount(context, count - 1)
-                feedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
             }
         }
+
         Dialogs(count, viewModel)
     }
     // have to use this to fixed loss of focus when navigating to settings screen
     // LaunchedEffect does not work
+    val view = LocalView.current
     LifecycleResumeEffect(Unit) {
         focusRequester.requestFocus()
-        onPauseOrDispose {  }
+        onPauseOrDispose { }
     }
-
+    DisposableEffect(view, keepScreenOn) {
+        view.keepScreenOn = keepScreenOn
+        onDispose {
+            view.keepScreenOn = false
+        }
+    }
 }
 
 @Composable
@@ -148,7 +178,7 @@ private fun Dialogs(count: Int, viewModel: HomeScreenViewModel){
 }
 
 @Composable
-private fun ColumnScope.CenterCount(count: Int, containerColor: Color, contentColor: Color,onEditCount: () -> Unit, onReset: () -> Unit, onOpenSettings: () -> Unit){
+private fun ColumnScope.CenterCount(isAmbient: Boolean, count: Int, containerColor: Color, contentColor: Color,onEditCount: () -> Unit, onReset: () -> Unit, onOpenSettings: () -> Unit){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -158,6 +188,7 @@ private fun ColumnScope.CenterCount(count: Int, containerColor: Color, contentCo
     ) {
 
         ActionButton(
+            isAmbient = isAmbient,
             icon = R.drawable.ic_reset,
             containerColor = containerColor,
             contentColor = contentColor,
@@ -179,6 +210,7 @@ private fun ColumnScope.CenterCount(count: Int, containerColor: Color, contentCo
             )
         }
         ActionButton(
+            isAmbient = isAmbient,
             icon = R.drawable.ic_settings,
             containerColor = containerColor,
             contentColor = contentColor,
@@ -188,19 +220,24 @@ private fun ColumnScope.CenterCount(count: Int, containerColor: Color, contentCo
 }
 
 @Composable
-private fun ActionButton(icon: Int, containerColor: Color, contentColor: Color, onClick: () -> Unit){
+private fun ActionButton(isAmbient: Boolean, icon: Int, containerColor: Color, contentColor: Color, onClick: () -> Unit){
     val isLarge = WearStyleHelper.isLargeScreen()
+    val baseShape = if(isLarge) MaterialTheme.shapes.medium else RoundedCornerShape(14.dp)
     IconButton(
         onClick = onClick,
         shapes = IconButtonDefaults.animatedShapes(
-            shape = if(isLarge) MaterialTheme.shapes.medium else RoundedCornerShape(14.dp),
+            shape = baseShape,
             pressedShape = MaterialTheme.shapes.small
         ),
         colors = IconButtonDefaults.iconButtonColors(
-            containerColor = containerColor,
-            contentColor = contentColor
+            containerColor = if(isAmbient) Color.Transparent else containerColor,
+            contentColor = if(isAmbient) containerColor else contentColor
         ),
-        modifier = Modifier.size(if(isLarge) 48.dp else 40.dp )
+        modifier = Modifier
+            .size(if(isLarge) 48.dp else 40.dp)
+            then(
+                if (isAmbient) Modifier.border(2.dp, containerColor, baseShape) else Modifier
+            )
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(icon),
@@ -211,7 +248,15 @@ private fun ActionButton(icon: Int, containerColor: Color, contentColor: Color, 
 }
 
 @Composable
-private fun ClickButton(icon: Int, containerColor: Color, contentColor: Color, onClick: () -> Unit){
+private fun ClickButton(
+    isAmbient: Boolean,
+    icon: Int,
+    containerColor: Color,
+    contentColor: Color,
+    useTopBorder: Boolean = false,
+    useBottomBorder: Boolean = false,
+    onClick: () -> Unit
+){
     val isLarge = WearStyleHelper.isLargeScreen()
     IconButton(
         onClick = onClick,
@@ -220,17 +265,19 @@ private fun ClickButton(icon: Int, containerColor: Color, contentColor: Color, o
             pressedShape = MaterialTheme.shapes.medium
         ),
         colors = IconButtonDefaults.iconButtonColors(
-            containerColor = containerColor,
-            contentColor = contentColor
+            containerColor = if(isAmbient) Color.Transparent else containerColor,
+            contentColor = if(isAmbient) containerColor else contentColor
         ),
         modifier = Modifier
             .fillMaxWidth()
             .height(if (isLarge) 66.dp else 56.dp)
+            then(
+                if (isAmbient) Modifier.partialBorder(2.dp, containerColor, useTopBorder, useBottomBorder) else Modifier
+            )
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(icon),
             contentDescription = null,
-            tint = contentColor,
             modifier = Modifier.size(if(isLarge) 40.dp else 32.dp)
         )
     }

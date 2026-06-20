@@ -35,6 +35,8 @@ class SettingsScreenViewModel(application: Application) : AndroidViewModel(appli
         val context = getApplication<Application>().applicationContext
         options.add(SettingsOption.SectionHeader(R.string.settings))
         options.add(SettingsOption.ColorOption(R.string.tally_theme_color, DataStorePrefs.KEY_APP_THEME_COLOR))
+        options.add(SettingsOption.SwitchOption(R.string.keep_screen_on, DataStorePrefs.KEY_KEEP_SCREEN_ON))
+
         options.add(SettingsOption.SectionHeader(R.string.about))
         options.add(SettingsOption.ClickOption(R.drawable.ic_google_play, R.string.play_store_page, null) {
             openLocalLink(context, "https://play.google.com/store/apps/details?id=${context.packageName}")
@@ -81,6 +83,12 @@ class SettingsScreenViewModel(application: Application) : AndroidViewModel(appli
             if(key == DataStorePrefs.KEY_APP_THEME_COLOR){
                 TallyTileService.setNeedUpdate()
             }
+        }
+    }
+
+    fun updateBoolean(context: Context, key: String, value: Boolean){
+        viewModelScope.launch(Dispatchers.IO) {
+            DataStorePrefs.updateBoolean(context, key, value)
         }
     }
 

@@ -68,4 +68,5 @@ dependencies {
     debugImplementation(libs.ui.tooling)
 
     implementation(libs.horologist.tiles)
+    implementation(libs.horologist.compose.layout)
 }

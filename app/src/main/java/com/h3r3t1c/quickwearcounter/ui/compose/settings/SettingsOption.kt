@@ -10,4 +10,5 @@ sealed class SettingsOption(val key: String) {
     class ClickOption(val iconResource: Int, val titleResource: Int, val subtitleResource: Int?, val onClick: () -> Unit): SettingsOption(titleResource.toString())
     class AppOption(val iconResource: Int, val iconBackgroundColor: Color, val titleResource: Int, val onClick: () -> Unit): SettingsOption(titleResource.toString())
     class SwitchOption(val titleResource: Int, val subTitleResource: Int?, dataStorePrefsKey: String): SettingsOption(dataStorePrefsKey)
+    class NavDestinationOption(val titleResource: Int, val subtitleResource: Int?, val destination: String): SettingsOption(destination)
 }

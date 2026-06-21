@@ -102,19 +102,45 @@ fun SettingsScreen(navController: NavHostController, prefs: Preferences) {
                             viewModel.updateBoolean(context, option.key, newValue)
                         }
                     }
+                    is SettingsOption.NavDestinationOption -> {
+                        NavDestinationOption(option) {
+                            navController.navigate(option.destination)
+                        }
+                    }
                 }
             }
         }
     }
     if(viewModel.loading){
         Box(
-            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)).pointerInput(Unit) { /* block touch input */ },
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+                .pointerInput(Unit) { /* block touch input */ },
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
         }
     }
     Dialogs(viewModel)
+}
+
+@Composable
+private fun NavDestinationOption(option: SettingsOption.NavDestinationOption, onClick: () -> Unit){
+    Button(
+        onClick = onClick,
+        label = {
+            Text(text = stringResource(option.titleResource))
+        },
+        icon = {
+            //OptionIcon(option.iconResource, stringResource(option.titleResource))
+        },
+        secondaryLabel = option.subtitleResource?.let {
+            { Text(text = stringResource(it), maxLines = 4) }
+        },
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.filledTonalButtonColors()
+    )
 }
 
 @Composable
@@ -125,10 +151,8 @@ private fun SwitchOption(titleResource: Int, subtitleResource: Int?, value: Bool
         label = {
             Text(text = stringResource(titleResource))
         },
-        secondaryLabel = {
-            subtitleResource?.let {
-                Text(stringResource(it), maxLines = 4)
-            }
+        secondaryLabel = subtitleResource?.let {
+            { Text(stringResource(it), maxLines = 4) }
         },
         modifier = Modifier.fillMaxWidth(),
         colors = SwitchButtonDefaults.switchButtonColors()
@@ -146,7 +170,10 @@ private fun AppOption(option: SettingsOption.AppOption){
             Image(
                 imageVector = ImageVector.vectorResource(option.iconResource),
                 contentDescription = stringResource(option.titleResource),
-                modifier = Modifier.size(if(WearStyleHelper.isLargeScreen()) ButtonDefaults.ExtraLargeIconSize else ButtonDefaults.LargeIconSize).background(option.iconBackgroundColor, MaterialTheme.shapes.small).padding(4.dp)
+                modifier = Modifier
+                    .size(if (WearStyleHelper.isLargeScreen()) ButtonDefaults.ExtraLargeIconSize else ButtonDefaults.LargeIconSize)
+                    .background(option.iconBackgroundColor, MaterialTheme.shapes.small)
+                    .padding(4.dp)
             )
         },
 
@@ -239,7 +266,7 @@ private fun ColorOption(title: String, color: Color, onClick: () -> Unit){
             Box(
                 modifier = Modifier
                     .background(color, CircleShape)
-                    .size(if(WearStyleHelper.isLargeScreen()) ButtonDefaults.LargeIconSize else ButtonDefaults.IconSize)
+                    .size(if (WearStyleHelper.isLargeScreen()) ButtonDefaults.LargeIconSize else ButtonDefaults.IconSize)
             )
         },
         modifier = Modifier.fillMaxWidth(),

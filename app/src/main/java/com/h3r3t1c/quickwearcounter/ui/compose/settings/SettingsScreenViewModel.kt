@@ -18,6 +18,7 @@ import com.h3r3t1c.quickwearcounter.BuildConfig
 import com.h3r3t1c.quickwearcounter.R
 import com.h3r3t1c.quickwearcounter.data.DataStorePrefs
 import com.h3r3t1c.quickwearcounter.tile.TallyTileService
+import com.h3r3t1c.quickwearcounter.ui.compose.nav.NavDestinations
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -36,7 +37,7 @@ class SettingsScreenViewModel(application: Application) : AndroidViewModel(appli
         options.add(SettingsOption.SectionHeader(R.string.settings))
         options.add(SettingsOption.ColorOption(R.string.tally_theme_color, DataStorePrefs.KEY_APP_THEME_COLOR))
         options.add(SettingsOption.SwitchOption(R.string.keep_screen_on, R.string.keep_screen_on_description,DataStorePrefs.KEY_KEEP_SCREEN_ON))
-        options.add(SettingsOption.SwitchOption(R.string.keep_screen_visible_ambient_mode, R.string.keep_screen_visible_ambient_mode_description,DataStorePrefs.KEY_KEEP_SCREEN_VISIBLE_AMBIENT_MODE))
+        options.add(SettingsOption.NavDestinationOption(R.string.keep_screen_visible_ambient_mode, R.string.keep_screen_visible_ambient_mode_description, NavDestinations.AMBIENT_MODE_SETTINGS))
 
 
         options.add(SettingsOption.SectionHeader(R.string.about))

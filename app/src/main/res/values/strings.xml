@@ -12,7 +12,7 @@
     <string name="about">About</string>
     <string name="version">Version</string>
     <string name="play_store_page">Play Store Page</string>
-    <string name="cannot_open">Cannot open!</string>
+    <string name="cannot_open">Unable to open!</string>
     <string name="source_code">Source Code</string>
     <string name="source_code_description">View the source code on GitHub using your phone.</string>
     <string name="not_connected_to_phone">Not connected to phone</string>
@@ -27,9 +27,12 @@
     <string name="edit_value">Edit Value</string>
     <string name="text_must_be_a_number">Text must be a number!</string>
     <string name="keep_screen_on">Keep Screen On</string>
-    <string name="keep_screen_on_description">Keep screen on while using app. Will never enter ambient mode in app.</string>
+    <string name="keep_screen_on_description">Keep the screen on while using the app. The app will never enter ambient mode.</string>
     <string name="ongoing_activity">Ongoing Activity</string>
-    <string name="ongoing_activity_desc">Ongoing activity notification to keep screen shown in ambient mode.</string>
-    <string name="keep_screen_visible_ambient_mode">Keep Screen Visible - Ambient Mode</string>
+    <string name="ongoing_activity_desc">An ongoing activity notification to keep the screen visible in ambient mode.</string>
+    <string name="keep_screen_visible_ambient_mode">Keep Screen Visible in Ambient Mode</string>
     <string name="keep_screen_visible_ambient_mode_description">Prevent the system from closing the app while in ambient mode.</string>
+    <string name="keep_screen_visible_ambient_mode_desc">This app supports ambient mode when Always On Display is enabled. By default, the system will automatically return to the watch face after a set amount of time in ambient mode. To prevent this, the app can run as an ongoing activity when in ambient mode. Enabling this feature requires notification permission to granted.</string>
+    <string name="notification_permission_already_granted">Notification permission already granted</string>
+    <string name="grant_notification_permission">Grant Notification Permission</string>
 </resources>

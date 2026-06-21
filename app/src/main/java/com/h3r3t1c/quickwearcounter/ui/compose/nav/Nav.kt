@@ -1,7 +1,6 @@
 package com.h3r3t1c.quickwearcounter.ui.compose.nav
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -16,6 +15,7 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.h3r3t1c.quickwearcounter.ext.dataStore
+import com.h3r3t1c.quickwearcounter.ui.compose.ambient_settings.AmbientModeSettingsScreen
 import com.h3r3t1c.quickwearcounter.ui.compose.home.HomeScreen
 import com.h3r3t1c.quickwearcounter.ui.compose.settings.SettingsScreen
 
@@ -39,6 +39,9 @@ fun Nav(destination: String = NavDestinations.HOME){
                 }
                 composable(NavDestinations.SETTINGS){
                     SettingsScreen(navController, prefs.value!!)
+                }
+                composable(NavDestinations.AMBIENT_MODE_SETTINGS){
+                    AmbientModeSettingsScreen(navController, prefs.value!!)
                 }
             }
         }else{
